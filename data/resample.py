@@ -1,18 +1,12 @@
 import pandas as pd
 import os
 
+from utils import get_file_list
+
 def load_dataset(path):
     df = pd.read_csv(path, names=['timestamp', 'price', 'amount'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
     return df.set_index('timestamp')
-
-def load_datasets(path):
-    for filename in os.listdir(path):
-        filepath = os.path.join(path, filename)
-        if not os.path.isfile(filepath):
-            continue
-        print('Reading: ', filename)
-        yield (filename, load_dataset(filepath))
 
 def resample_dataset(df, sample_rate):
     result = df['price'].resample(sample_rate).ohlc().ffill()
@@ -20,7 +14,9 @@ def resample_dataset(df, sample_rate):
     return result
 
 def resample_directory(input_path, output_path, sample_rate):
-    for filename, df in load_datasets(input_path):
+    for filepath, filename in get_file_list(input_path):
+        print('Reading: ', filename)
+        df = load_dataset(filepath)
         print('Resampling:', filename)
         df = resample_dataset(df, sample_rate)
         df.to_csv(os.path.join(output_path, filename))
