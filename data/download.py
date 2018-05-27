@@ -22,14 +22,16 @@ def download(url, output_path):
     return True
 
 def get_paths(base_path):
-    cache_path = os.path.join(base_path, 'downloads/')
+    if not os.path.exists(base_path):
+        os.makedirs(base_path)
+    cache_path = os.path.join(base_path, 'downloads')
     if not os.path.exists(cache_path):
         os.makedirs(cache_path)
-    data_path = os.path.join(base_path, 'ticks/')
+    data_path = os.path.join(base_path, 'ticks')
     if not os.path.exists(data_path):
         os.makedirs(data_path)
 
-    return (cache_path + '{0}.csv.gz', data_path + '{0}.csv')
+    return (cache_path + '/{0}.csv.gz', data_path + '/{0}.csv')
 
 def download_list(base_path, base_url, targets):
     cache_format, data_format = get_paths(base_path)
