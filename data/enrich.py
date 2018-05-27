@@ -24,12 +24,17 @@ def get_paths(base_path, sample_rate):
         os.makedirs(rich_path)
     return (samples_path, rich_path)
 
-sample_path, rich_path = get_paths('E:\\Datasets\\', '15min')
+def enrich_directory(sample_path, rich_path):
+    for filepath, filename in get_file_list(sample_path):
+        print('Reading:', filename)
+        df = load_sampleset(filepath)
+        print('Enriching:', filename)
+        df = enrich_sampleset(df)
+        print('Saving:', filename)
+        df.to_csv(os.path.join(rich_path, filename))
 
-for filepath, filename in get_file_list(sample_path):
-    print('Reading:', filename)
-    df = load_sampleset(filepath)
-    print('Enriching:', filename)
-    df = enrich_sampleset(df)
-    print('Saving:', filename)
-    df.to_csv(os.path.join(rich_path, filename))
+if __name__ == "__main__":
+    base_path = 'e:/datasets'
+    sample_rate = '15min'
+    sample_path, rich_path = get_paths(base_path, sample_rate)
+    enrich_directory(sample_path, rich_path)
