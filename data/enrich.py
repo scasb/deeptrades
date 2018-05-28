@@ -11,7 +11,11 @@ def load_sampleset(path):
 def enrich_sampleset(df):
     df['OBV'] = ta.on_balance_volume(df['close'], df['volume'])
     df['ADX'] = ta.adx(df['high'], df['low'], df['close'], n=14)
-    return df
+    df['VPT'] = ta.volume_price_trend(df['close'], df['volume'])
+    df['ATR'] = ta.average_true_range(df['high'], df['low'], df['close'], n=14)
+    df['MFI'] = ta.money_flow_index(df['high'], df['low'], df['close'], df['volume'])
+    df['KST'] = ta.kst(df['close'])
+    return ta.utils.dropna(df)
 
 def get_paths(base_path, sample_rate):
     if not os.path.exists(base_path):
